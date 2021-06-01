@@ -1,0 +1,96 @@
+//apply plugin: 'com.github.dcendents.android-maven'
+//apply plugin: 'java'
+apply plugin: 'signing'
+apply plugin: 'maven'
+//apply plugin: 'maven-publish'
+
+group = 'io.github.nameyuan'
+//group = 'com.leon.channel'
+//version '2.0.3-SNAPSHOT'
+version = '2.0.3'
+
+uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: uri('E:/maven/repository'))
+//        }
+//    }
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+//            repositories {
+//                mavenDeployer {
+//                    repository(url: uri('E:/maven/repository'))
+//                }
+//            }
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            pom.project {
+                name POM_NAME
+                artifactId POM_ARTIFACT_ID
+                packaging POM_PACKAGING
+                description "VasDolly"
+                url "https://github.com/nameyuan/VasDollyU"
+                scm {
+                    connection "https://github.com/nameyuan/VasDollyU.git"
+                    developerConnection "https://github.com/nameyuan/VasDollyU.git"
+                    url "https://github.com/nameyuan/VasDollyU.git"
+                }
+                licenses { //set your license
+                    license {
+                        name "BSD License"
+                        url "https://opensource.org/licenses/BSD-3-Clause"
+                        distribution "repo"
+                    }
+                }
+                developers {
+                    developer { //developer info
+                        id 'leon'
+                        name 'leon'
+                        email 'ltlovezh@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign configurations.archives
+}
+
+//添加生成任务
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+//    from sourceSets
+//    from sourceSets.main.java.srcDirs
+
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+//    from javadoc.destinationDir
+    from javadoc
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+//tasks.withType(JavaCompile) {
+//    configure(options) {
+//        incremental = true
+//    }
+////        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+//    options.encoding = "UTF-8"
+//}
+//
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+}

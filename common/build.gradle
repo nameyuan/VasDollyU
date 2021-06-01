@@ -1,0 +1,10 @@
+apply plugin: 'java'
+apply from: rootProject.file("maven.gradle")
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_1_8
+
